@@ -1,0 +1,26 @@
+{
+    "env": {
+        "browser": true,
+        "es2020": true
+    },
+    "extends": [
+        "airbnb-base"
+    ],
+    "parserOptions": {
+        "ecmaVersion": 11,
+        "sourceType": "module"
+    },
+    "ignorePatterns": [
+        "webpack.config.js"
+    ],
+    "rules": {
+        "indent": [
+            "error",
+            4
+        ],
+        "linebreak-style": "off",
+        "import/prefer-default-export": "off",
+        "no-restricted-syntax": "off",
+        "guard-for-in": "off"
+    }
+}
