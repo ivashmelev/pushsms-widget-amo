@@ -18,16 +18,44 @@ define(['underscore', 'twigjs'], function (_, Twig) {
 				console.log('render');
 
 
-				self.getTemplate('title', template => {
+				// self.getTemplate('select', template => {
 
-					self.render_template({
-						caption: {
-							class_name: 'push_widget'
-						},
-						body: '',
-						render: template.render({ title: '123' })
-					});
-				});
+				// 	self.render_template({
+				// 		caption: {
+				// 			class_name: 'push_widget'
+				// 		},
+				// 		body: '',
+				// 		render: template.render({
+				// 			items: [{
+				// 				id: 0, option: 'option1',
+				// 				id: 1, option: 'option2'
+				// 			}]
+				// 		})
+				// 	});
+				// });
+				const items = [
+					{ id: 'id0', option: 'option1' },
+					{ id: 'id1', option: 'option2' },
+					{ id: 'id2', option: 'option3' }]
+
+				var data = self.render(
+					{ ref: '/tmpl/controls/select.twig' }, // объект data в данном случае содержит только ссылку на шаблон
+					{
+						items,      //данные
+						class_name: 'subs_w',  //указание класса
+						id: self.get_settings().widget_code + '_list'   //указание id
+					}
+				);
+
+				document.querySelector('.card-widgets__elements').insertAdjacentHTML('afterbegin', data);
+
+				// self.render_template({
+				// 	caption: {
+				// 		class_name: 'push_widget'
+				// 	},
+				// 	body: '',
+				// 	render: data
+				// });
 
 				return true;
 			},
