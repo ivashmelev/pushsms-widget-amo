@@ -1,0 +1,64 @@
+{
+  "widget": {
+    "name": "widget.name",
+    "description": "widget.description",
+    "short_description": "widget.short_description",
+    "version": "0.0.1",
+    "interface_version": 1,
+    "init_once": true,
+    "locale": [
+      "ru"
+    ],
+    "installation": true,
+    "support": {
+      "link": "https://www.amocrm.com",
+      "email": "support@amocrm.com"
+    }
+  },
+  "locations": [
+    "llist-0",
+    "clist-0"
+  ],
+  "tour": {
+    "is_tour": true,
+    "tour_images": {
+      "ru": [
+        "/images/logo_main.png",
+        "/images/logo_main.png",
+        "/images/logo_main.png"
+      ]
+    },
+    "tour_description": "widget.tour_description"
+  },
+  "settings": {
+    "pushsmskey": {
+      "name": "settings.pushsmskey",
+      "type": "text",
+      "required": true
+    },
+    "apikey": {
+      "name": "settings.api_key",
+      "type": "text",
+      "required": true
+    },
+    "account": {
+      "name": "settings.account",
+      "type": "text",
+      "required": true
+    }
+  },
+  "dp": {
+    "settings": {
+      "message": {
+        "name": "dp.message",
+        "type": "text",
+        "required": true
+      }
+    },
+    "action_multiple": false,
+    "webhook_url": "https://example.com/webhook"
+  },
+  "advanced": {
+    "title": "advanced.title"
+  }
+}
