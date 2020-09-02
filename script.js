@@ -1,33 +1,47 @@
-define(['twigjs'], function (Twig) {
+define(['underscore', 'twigjs'], function (_, Twig) {
 	var CustomWidget = function () {
 		var self = this;
 
-		this.getTemplate = _.bind(function (template, params, callback) {
+		this.getTemplate = _.bind(function (template, callback) {
 			params = (typeof params == 'object') ? params : {};
 			template = template || '';
 
 			return this.render({
 				href: '/templates/' + template + '.twig',
 				base_path: this.params.path,
-				v: this.get_version(),
 				load: callback
-			}, params);
+			});
 		}, this);
 
 		this.callbacks = {
 			render: function () {
 				console.log('render');
+
+
+				self.getTemplate('title', template => {
+
+					self.render_template({
+						caption: {
+							class_name: 'push_widget'
+						},
+						body: '',
+						render: template.render({ title: '123' })
+					});
+				});
+
 				return true;
 			},
-			init: function () {
-				console.log('init', CustomWidgets);
+			init: _.bind(function () {
+				console.log('init');
 				return true;
-			},
+			}, this),
 			bind_actions: function () {
 				console.log('bind_actions');
 				return true;
 			},
 			settings: function () {
+				console.log('settings');
+
 				return true;
 			},
 			onSave: function () {
@@ -37,12 +51,6 @@ define(['twigjs'], function (Twig) {
 			destroy: function () {
 
 			},
-			// contacts: {
-			// 	//select contacts in list and clicked on widget name
-			// 	selected: function () {
-			// 		console.log('contacts');
-			// 	}
-			// },
 		};
 		return this;
 	};
