@@ -32,18 +32,18 @@
     "tour_description": "widget.tour_description"
   },
   "settings": {
-    "pushsmskey": {
-      "name": "settings.pushsmskey",
+    "pushsmsKey": {
+      "name": "settings.pushsmsKey",
       "type": "text",
       "required": true
     },
-    "api_key": {
-      "name": "settings.api_key",
+    "clientSecret": {
+      "name": "settings.clientSecret",
       "type": "text",
       "required": true
     },
-    "account": {
-      "name": "settings.account",
+    "code": {
+      "name": "settings.code",
       "type": "text",
       "required": true
     }

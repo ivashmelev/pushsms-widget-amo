@@ -1,6 +1,10 @@
 define(['underscore', 'twigjs'], function (_, Twig) {
 	var CustomWidget = function () {
-		var self = this;
+		const self = this;
+		window.AMOWIDGET = self;
+
+		console.log(this);
+
 
 		this.getTemplate = _.bind(function (template, callback) {
 			params = (typeof params == 'object') ? params : {};
@@ -17,7 +21,6 @@ define(['underscore', 'twigjs'], function (_, Twig) {
 			render: function () {
 				console.log('render');
 
-
 				self.getTemplate('card', template => {
 
 					self.render_template({
@@ -28,35 +31,6 @@ define(['underscore', 'twigjs'], function (_, Twig) {
 						render: template.render()
 					});
 				});
-				// const items = [
-				// 	{ id: 'id0', option: 'option1' },
-				// 	{ id: 'id1', option: 'option2' },
-				// 	{ id: 'id2', option: 'option3' }]
-
-				// var data = self.render(
-				// 	{ ref: '/tmpl/controls/select.twig' }, // объект data в данном случае содержит только ссылку на шаблон
-				// 	{
-				// 		items,      //данные
-				// 		class_name: 'subs_w',  //указание класса
-				// 		id: self.get_settings().widget_code + '_list'   //указание id
-				// 	}
-				// );
-
-				// const data = self.render(
-				// 	{
-				// 		href: '/templates/block.twig'
-				// 	}
-				// )
-
-				// document.querySelector('.card-widgets__elements').insertAdjacentHTML('afterbegin', data);
-
-				// self.render_template({
-				// 	caption: {
-				// 		class_name: 'push_widget'
-				// 	},
-				// 	body: '',
-				// 	render: data
-				// });
 
 				return true;
 			},

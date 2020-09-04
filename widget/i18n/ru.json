@@ -6,9 +6,9 @@
         "tour_description": "Описание виджета"
     },
     "settings": {
-        "pushsmskey": "Токен PUSH SMS",
-        "api_key": "ключ API",
-        "account": "Аккаунт"
+        "pushsmsKey": "Токен PUSH SMS",
+        "clientSecret": "Секретный ключ виджета",
+        "code": "Код авторизации"
     },
     "advanced": {
         "title": "Заголовок меню в настройках"
