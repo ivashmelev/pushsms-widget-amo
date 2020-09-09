@@ -1,7 +1,8 @@
 import { GET_ACCOUNT_SUCCESS } from "./types";
 
 const initialState = {
-    totalAmount: 0
+    totalAmount: 0,
+    senderNames: []
 }
 
 export default (state = initialState, action) => {
@@ -9,10 +10,12 @@ export default (state = initialState, action) => {
         case GET_ACCOUNT_SUCCESS: {
 
             const totalAmount = action.payload.account.total_amount;
+            const senderNames = action.payload.account.sender_names;
 
             return {
                 ...state,
-                totalAmount
+                totalAmount,
+                senderNames
             }
         }
         default: return state;

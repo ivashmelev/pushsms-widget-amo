@@ -1,5 +1,23 @@
+@import "../../../../node_modules/antd/dist/antd.css";
+
 .wrapper {
     padding: 20px;
 
     background-color: white;
+}
+
+.row {
+    margin-bottom: 15px;
+}
+
+.info_text {
+    display: flex;
+
+    margin-top: 10px;
+
+    color: #bfbfbf;
+}
+
+.select {
+    width: 100%;
 }
