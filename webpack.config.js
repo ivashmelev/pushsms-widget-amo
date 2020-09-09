@@ -99,7 +99,7 @@ module.exports = {
     devServer: {
         contentBase: path.join(__dirname, '/widget/build'),
         compress: true,
-        port: 3000,
+        port: 5000,
         hot: true,
         https: true,
     },

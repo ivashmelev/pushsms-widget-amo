@@ -13,8 +13,9 @@ app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
 
 
-// app.get('/', (req, res) => {
-//     authData = req.query;
+// app.all('/', (req, res) => {
+//     console.log(req.body.payment.products);
+
 
 //     res.sendFile(path.join(__dirname, '../widget/build/card', 'index.html'));
 // });

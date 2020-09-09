@@ -19,7 +19,7 @@
     "@types/react-redux": "^7.1.9",
     "@types/redux-api-middleware": "^3.2.2",
     "@types/redux-logger": "^3.0.8",
-    "antd": "^4.4.0",
+    "antd": "^4.6.3",
     "antd-scss-theme-plugin": "^1.0.8",
     "apexcharts": "^3.19.3",
     "babel-plugin-import": "^1.13.0",

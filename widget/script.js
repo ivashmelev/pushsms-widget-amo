@@ -36,7 +36,6 @@ define(['underscore', 'twigjs'], function (_, Twig) {
 			},
 			init: _.bind(function () {
 				console.log('init');
-				window.pushsmskey = self.params.pushsmskey;
 				return true;
 			}, this),
 			bind_actions: function () {
