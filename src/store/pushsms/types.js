@@ -1,3 +1,11 @@
 export const GET_ACCOUNT_FETCH = '@@pushsms/GET_ACCOUNT_FETCH';
 export const GET_ACCOUNT_SUCCESS = '@@pushsms/GET_ACCOUNT_SUCCESS';
 export const GET_ACCOUNT_FAILURE = '@@pushsms/GET_ACCOUNT_FAILURE';
+
+export const DELIVERY_MESSAGE_FETCH = '@@pushsms/DELIVERY_MESSAGE_FETCH';
+export const DELIVERY_MESSAGE_SUCCESS = '@@pushsms/DELIVERY_MESSAGE_SUCCESS';
+export const DELIVERY_MESSAGE_FAILURE = '@@pushsms/DELIVERY_MESSAGE_FAILURE';
+
+export const GET_STATUS_FETCH = '@@pushsms/GET_STATUS_FETCH';
+export const GET_STATUS_SUCCESS = '@@pushsms/GET_STATUS_SUCCESS';
+export const GET_STATUS_FAILURE = '@@pushsms/GET_STATUS_FAILURE';

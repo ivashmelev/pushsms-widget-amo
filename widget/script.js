@@ -65,6 +65,20 @@ define(['underscore', 'twigjs'], function (_, Twig) {
 			destroy: function () {
 
 			},
+			loadPreloadedData: () => {
+				return new Promise();
+			},
+			loadElements: function (type, id) {
+				console.log('load elements');
+
+				return new Promise(resolve => console.log(type, id));
+			},
+			linkCard: () => {
+				return new Promise();
+			},
+			searchDataInCard: () => {
+				return new Promise();
+			}
 		};
 		return this;
 	};

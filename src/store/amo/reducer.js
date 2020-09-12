@@ -1,0 +1,33 @@
+import { ADD_PHONE, REMOVE_PHONE } from "./types"
+
+const initialState = {
+    phones: []
+}
+
+export default (state = initialState, action) => {
+    switch (action.type) {
+        case ADD_PHONE: {
+
+            const phones = [...state.phones];
+
+            phones.push(action.payload);
+
+            return {
+                ...state,
+                phones
+            }
+        }
+        case REMOVE_PHONE: {
+
+            const phones = [...state.phones];
+
+            phones.splice(action.payload, 1);
+
+            return {
+                ...state,
+                phones
+            }
+        }
+        default: return state;
+    }
+}

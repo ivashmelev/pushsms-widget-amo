@@ -13,11 +13,24 @@
 .info_text {
     display: flex;
 
-    margin-top: 10px;
+    margin-top: -20px;
 
     color: #bfbfbf;
 }
 
 .select {
     width: 100%;
+}
+
+.status_text {
+    font-size: 14px;
+    white-space: pre-line;
+
+    &.error {
+        color: #ff4d4f;
+    }
+
+    &.success {
+        color: #52c41a;
+    }
 }

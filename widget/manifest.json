@@ -18,7 +18,12 @@
   "locations": [
     "llist-1",
     "clist-1",
-    "lcard-1"
+    "lcard-1",
+    "lcard-0",
+    "ccard-0",
+    "comcard-0",
+    "settings",
+    "card_sdk"
   ],
   "tour": {
     "is_tour": true,

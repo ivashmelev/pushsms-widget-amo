@@ -1,22 +1,28 @@
 import React, { memo, useState, useRef, useEffect } from 'react';
 import styles from './PhoneGroup.module.scss';
-import { Input, Tag, Form } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { Input, Tag, Form, Button } from 'antd';
+import { PlusOutlined, EnterOutlined } from '@ant-design/icons';
 import getRandomKey from '../../../helpers/getRandomKey';
 import validatePhone from '../../../helpers/validatePhone';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux'
+import { addPhone, removePhone } from '../../../store/amo/actions';
 
 
-const PhoneGroup = memo(({ phones }) => {
+const PhoneGroup = memo(({ phones, formWidget, addPhone, removePhone }) => {
 
     const [isShowInput, setIsShowInput] = useState(false);
-    const [inputValue, setInputValue] = useState('')
     const inputElement = useRef();
-    const [form] = Form.useForm();
+    const [formPhone] = Form.useForm();
 
-    const changeInput = () => e => setInputValue(e.target.value);
+    const changeInput = e => formPhone.setFieldsValue({ phone: validatePhone(e.target.value) });
 
     const showInput = () => {
         setIsShowInput(true);
+    }
+
+    const closeTag = index => () => {
+        removePhone(index)
     }
 
     useEffect(() => {
@@ -27,54 +33,78 @@ const PhoneGroup = memo(({ phones }) => {
 
     const hideInput = () => setIsShowInput(false);
 
-    const addPhone = (e) => {
-        console.log(e);
-
-        phones.push();
+    const addTag = (data) => {
         hideInput();
-        form.resetFields();
+
+        formPhone.validateFields().then(values => {
+            addPhone(data.phone);
+            formWidget.setFieldsValue({ phones: [...phones, data.phone] })
+        });
+
+        formPhone.resetFields();
     }
 
     return (
         <div className={ styles.wrapper }>
             <div className={ styles.tags }>
-                { phones.map(phone => {
+                { phones.map((phone, index) => {
                     return (
-                        <Tag key={ getRandomKey() } closable>{ phone }</Tag>
+                        <Tag
+                            className={ styles.tag }
+                            key={ getRandomKey() }
+                            closable
+                            onClose={ closeTag(index) }
+                        >
+                            { phone }
+                        </Tag>
                     );
                 }) }
             </div>
             <div className={ styles.input }>
                 { isShowInput ?
-                    <Form form={ form } onFinish={ addPhone }>
+                    <Form form={ formPhone } onFinish={ addTag }>
                         <Form.Item
                             name='phone'
+                            initialValue={ 8 }
                             rules={ [
                                 {
                                     required: true,
-                                    pattern: /^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{15}$/,
+                                    pattern: /^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{11}$/,
                                     message: 'Введите корректный номер'
                                 }
                             ] }
                         >
                             <Input
                                 ref={ inputElement }
-                                placeholder='Введите номер'
-                                value={ form.getFieldValue('phone') }
-                                onChange={ e => form.setFieldsValue({ phone: validatePhone(e.target.value) }) }
-                                onPressEnter={ form.submit }
+                                value={ formPhone.getFieldValue('phone') }
+                                onChange={ changeInput }
+                                onPressEnter={ formPhone.submit }
                                 onBlur={ hideInput }
+                                suffix={ <EnterOutlined /> }
                             />
                         </Form.Item>
                     </Form>
                     :
-                    <Tag onClick={ showInput }>
+                    <Button type='dashed' size='small' onClick={ showInput }>
                         <PlusOutlined /> Добавить номер
-                    </Tag>
+                    </Button>
                 }
             </div>
         </div>
     )
 });
 
-export default PhoneGroup;
+const mapState = state => {
+    const { amo } = state;
+
+    return { ...amo };
+}
+
+const mapDispatch = dispatch => {
+    return bindActionCreators(
+        { addPhone, removePhone },
+        dispatch
+    )
+}
+
+export default connect(mapState, mapDispatch)(PhoneGroup);
