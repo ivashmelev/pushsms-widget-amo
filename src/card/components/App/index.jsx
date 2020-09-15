@@ -5,23 +5,45 @@ import { bindActionCreators } from 'redux'
 import { getAccesToken, refreshAccessToken } from '../../../store/auth/actions'
 import { useEffect } from 'react'
 import Cookie from '../../../helpers/Cookie';
-import { getAccount, deliveryMessage, getStatusMessage } from '../../../store/pushsms/actions'
+import { getAccount, deliveryMessage, getStatusMessage, deliveryBulk, calcBulkDelivery } from '../../../store/pushsms/actions'
+import './App.scss';
 import styles from './App.module.scss';
 import { Input, Select, Tag, Checkbox, DatePicker, Button, Form, message } from 'antd';
 import getLeftSymbols from '../../../helpers/getLeftSymbols'
 import getRandomKey from '../../../helpers/getRandomKey'
 import PhoneGroup from '../PhoneGroup'
 import { getInfo } from '../../../store/reducers'
-import { getLead } from '../../../store/amo/actions'
+import { getLead, initialPhones } from '../../../store/amo/actions'
 import { getEntity, getIdEntity } from '../../../helpers/entity'
+import { useDispatch } from 'react-redux'
+import getCodeWidget from '../../../helpers/getCodeWidget'
 
-const App = memo(({
-    isAuth, totalAmount, senderNames, phones, messageId, isMessageSend, info, sum,
-    getAccesToken, refreshAccessToken, getAccount, deliveryMessage, getStatusMessage, getLead
+
+const App = ({
+    isAuth,
+    isCalcBulk,
+    isMessageSend,
+    totalAmount,
+    senderNames,
+    phones,
+    messageId,
+    info,
+    sum,
+    getAccesToken,
+    refreshAccessToken,
+    getAccount,
+    deliveryMessage,
+    getStatusMessage,
+    getLead,
+    initialPhones,
+    deliveryBulk,
+    calcBulkDelivery
 }) => {
 
     const [text, setText] = useState('');
     const [formWidget] = Form.useForm();
+
+    window.initialPhones = initialPhones;
 
     useEffect(() => {
         if (!isAuth) {
@@ -42,12 +64,9 @@ const App = memo(({
 
             if (entity === 'leads' && id) {
                 getLead(id)
-            } else {
-                console.log(entity, id);
             }
         }
     }, [isAuth]);
-
 
     useEffect(() => {
         getAccount();
@@ -77,8 +96,17 @@ const App = memo(({
         }
 
         formWidget.validateFields().then(values => {
-            console.log(values);
-            deliveryMessage(values);
+            if (phones.length > 1) {
+                deliveryBulk({ ...values, numbers: values.phones });
+            } else {
+                deliveryMessage(values);
+            }
+        });
+    }
+
+    const handleCalc = () => {
+        formWidget.validateFields().then(values => {
+            calcBulkDelivery({ ...values, numbers: phones });
         });
     }
 
@@ -148,10 +176,20 @@ const App = memo(({
                     <DatePicker placeholder="Дата и время" showTime={ { format: 'HH:mm' } } format='DD.MM.YYYY HH:mm' />
                 </div> */}
                 <div className={ styles.row }>
+                    { phones.length > 1 && text.length !== 0 &&
+                        <Button style={ { margin: '0 0 10px 0' } } loading={ isCalcBulk }
+                            type='dashed'
+                            onClick={ handleCalc }
+                            size='small'
+                        >
+                            Рассчитать стоимость
+                            </Button>
+                    }
                     <Form.Item>
                         <Button loading={ isMessageSend }
                             htmlType='submit'
                             type='primary'
+                            size='small'
                         >
                             Отправить
                         </Button>
@@ -167,7 +205,7 @@ const App = memo(({
             </Form>
         </div>
     )
-})
+}
 
 const mapState = (state) => {
     const { auth, pushsms, amo } = state;
@@ -182,7 +220,17 @@ const mapState = (state) => {
 
 const mapDispatch = (dispatch) => {
     return bindActionCreators(
-        { getAccesToken, refreshAccessToken, getAccount, deliveryMessage, getStatusMessage, getLead },
+        {
+            getAccesToken,
+            refreshAccessToken,
+            getAccount,
+            deliveryMessage,
+            getStatusMessage,
+            getLead,
+            initialPhones,
+            calcBulkDelivery,
+            deliveryBulk
+        },
         dispatch
     )
 }

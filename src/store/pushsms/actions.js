@@ -7,8 +7,15 @@ import {
     DELIVERY_MESSAGE_FAILURE,
     GET_STATUS_FETCH,
     GET_STATUS_SUCCESS,
-    GET_STATUS_FAILURE
+    GET_STATUS_FAILURE,
+    CALCULATE_BULK_DELIVERY_FETCH,
+    CALCULATE_BULK_DELIVERY_SUCCESS,
+    CALCULATE_BULK_DELIVERY_FAILURE,
+    DELIVERY_BULK_FETCH,
+    DELIVERY_BULK_SUCCESS,
+    DELIVERY_BULK_FAILURE
 } from "./types";
+
 import { withAuthPUSHSMS } from '../reducers';
 
 export const getAccount = () => async dispatch => {
@@ -72,6 +79,54 @@ export const getStatusMessage = id => async dispatch => {
     } else {
         dispatch({
             type: GET_STATUS_FAILURE,
+            payload: await response.json()
+        });
+    }
+}
+
+export const calcBulkDelivery = data => async dispatch => {
+    dispatch({ type: CALCULATE_BULK_DELIVERY_FETCH });
+
+    const response = await fetch(`https://api.pushsms.ru/api/amo/bulk_delivery/calculate`, {
+        method: 'POST',
+        headers: withAuthPUSHSMS(
+            { 'Content-Type': 'application/json' }
+        ),
+        body: JSON.stringify(data)
+    });
+
+    if (response.ok) {
+        dispatch({
+            type: CALCULATE_BULK_DELIVERY_SUCCESS,
+            payload: await response.json()
+        });
+    } else {
+        dispatch({
+            type: CALCULATE_BULK_DELIVERY_FAILURE,
+            payload: await response.json()
+        });
+    }
+}
+
+export const deliveryBulk = data => async dispatch => {
+    dispatch({ type: DELIVERY_BULK_FETCH });
+
+    const response = await fetch(`https://api.pushsms.ru/api/amo/bulk_delivery`, {
+        method: 'POST',
+        headers: withAuthPUSHSMS(
+            { 'Content-Type': 'application/json' }
+        ),
+        body: JSON.stringify(data)
+    });
+
+    if (response.ok) {
+        dispatch({
+            type: DELIVERY_BULK_SUCCESS,
+            payload: await response.json()
+        });
+    } else {
+        dispatch({
+            type: DELIVERY_BULK_FAILURE,
             payload: await response.json()
         });
     }

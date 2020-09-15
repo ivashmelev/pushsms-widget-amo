@@ -65,20 +65,30 @@ define(['underscore', 'twigjs'], function (_, Twig) {
 			destroy: function () {
 
 			},
-			loadPreloadedData: () => {
-				return new Promise();
-			},
-			loadElements: function (type, id) {
-				console.log('load elements');
+			contacts: {
+				selected: () => {
+					const contacts = self.list_selected().selected;
+					const phonesContactsAMO = [];
 
-				return new Promise(resolve => console.log(type, id));
+					contacts.forEach(({ phones }) => phones[0] && phonesContactsAMO.push(phones[0]));
+
+					window.initialPhones(phonesContactsAMO);
+
+
+					return true;
+				}
 			},
-			linkCard: () => {
-				return new Promise();
+			companies: {
+				selected: () => {
+					const contacts = self.list_selected().selected;
+					const phonesContactsAMO = [];
+
+					contacts.forEach(({ phones }) => phones[0] && phonesContactsAMO.push(phones[0]));
+
+					window.initialPhones(phonesContactsAMO);
+					return true;
+				}
 			},
-			searchDataInCard: () => {
-				return new Promise();
-			}
 		};
 		return this;
 	};

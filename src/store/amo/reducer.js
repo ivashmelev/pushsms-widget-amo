@@ -1,4 +1,4 @@
-import { ADD_PHONE, REMOVE_PHONE } from "./types"
+import { ADD_PHONE, REMOVE_PHONE, INITIAL_PHONES } from "./types"
 
 const initialState = {
     phones: []
@@ -6,6 +6,12 @@ const initialState = {
 
 export default (state = initialState, action) => {
     switch (action.type) {
+        case INITIAL_PHONES: {
+            return {
+                ...state,
+                phones: action.payload
+            }
+        }
         case ADD_PHONE: {
 
             const phones = [...state.phones];

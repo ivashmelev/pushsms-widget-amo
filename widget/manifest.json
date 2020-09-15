@@ -5,7 +5,7 @@
     "short_description": "widget.short_description",
     "version": "0.0.1",
     "interface_version": 2,
-    "init_once": false,
+    "init_once": true,
     "locale": [
       "ru"
     ],
@@ -16,12 +16,11 @@
     }
   },
   "locations": [
+    "catalogs",
     "llist-1",
     "clist-1",
     "lcard-1",
-    "lcard-0",
-    "ccard-0",
-    "comcard-0",
+    "ccard-1",
     "settings",
     "card_sdk"
   ],

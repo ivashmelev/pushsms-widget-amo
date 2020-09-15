@@ -3,10 +3,18 @@ import {
     REMOVE_PHONE,
     GET_LEAD_FETCH,
     GET_LEAD_SUCCESS,
-    GET_LEAD_FAILURE
+    GET_LEAD_FAILURE,
+    INITIAL_PHONES
 } from "./types"
 import { PORTAL_URL } from "..";
 import { withAuthAmo } from "../reducers";
+
+export const initialPhones = phones => dispatch => {
+    dispatch({
+        type: INITIAL_PHONES,
+        payload: phones
+    });
+}
 
 export const addPhone = phone => dispatch => {
     dispatch({

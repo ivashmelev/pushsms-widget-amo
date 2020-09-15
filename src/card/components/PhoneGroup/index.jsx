@@ -7,6 +7,7 @@ import validatePhone from '../../../helpers/validatePhone';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
 import { addPhone, removePhone } from '../../../store/amo/actions';
+import { calcBulkDelivery } from '../../../store/pushsms/actions';
 
 
 const PhoneGroup = memo(({ phones, formWidget, addPhone, removePhone }) => {
@@ -40,6 +41,7 @@ const PhoneGroup = memo(({ phones, formWidget, addPhone, removePhone }) => {
             addPhone(data.phone);
             formWidget.setFieldsValue({ phones: [...phones, data.phone] })
         });
+
 
         formPhone.resetFields();
     }
