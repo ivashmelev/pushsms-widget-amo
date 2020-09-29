@@ -1,4 +1,4 @@
-import { GET_ACCOUNT_SUCCESS, DELIVERY_MESSAGE_FETCH, DELIVERY_MESSAGE_SUCCESS, DELIVERY_MESSAGE_FAILURE, GET_STATUS_SUCCESS, GET_STATUS_FAILURE, CALCULATE_BULK_DELIVERY_FETCH, CALCULATE_BULK_DELIVERY_SUCCESS, CALCULATE_BULK_DELIVERY_FAILURE, DELIVERY_BULK_SUCCESS, DELIVERY_BULK_FAILURE } from "./types";
+import { GET_ACCOUNT_SUCCESS, DELIVERY_MESSAGE_FETCH, DELIVERY_MESSAGE_SUCCESS, DELIVERY_MESSAGE_FAILURE, GET_STATUS_SUCCESS, GET_STATUS_FAILURE, CALCULATE_BULK_DELIVERY_FETCH, CALCULATE_BULK_DELIVERY_SUCCESS, CALCULATE_BULK_DELIVERY_FAILURE, DELIVERY_BULK_SUCCESS, DELIVERY_BULK_FAILURE, DELIVERY_BULK_FETCH } from "./types";
 
 const initialState = {
     totalAmount: 0,
@@ -8,7 +8,8 @@ const initialState = {
     isMessageSend: false,
     isCalcBulk: false,
     error: null,
-    success: null
+    success: null,
+    enoughMoney: null
 }
 
 export default (state = initialState, action) => {
@@ -51,9 +52,22 @@ export default (state = initialState, action) => {
             }
         }
         case GET_STATUS_SUCCESS: {
+
+            const { description, status_id, sum } = action.payload.delivery.status;
+
+            let success = null;
+            let error = null;
+
+            if (status_id === 13) {
+                error = description;
+            } else {
+                success = description;
+            }
+
             return {
                 ...state,
-                success: action.payload.delivery.status.description,
+                success,
+                error,
                 sum: action.payload.delivery.sum,
                 isMessageSend: false
             }
@@ -78,7 +92,7 @@ export default (state = initialState, action) => {
             // console.log(action.payload);
 
             if (enough_money) {
-                success = `Будет отправлено: ${sms_per_delivery_count} смс.\n Всего номеров: ${approved_numbers_count}.\n Стоимость: ${final_sum} руб.`;
+                success = `Будет отправлено: ${sms_per_delivery_count} смс.\n Всего номеров: ${approved_numbers_count}.\n Стоимость: ${final_sum} руб`;
             } else {
                 error = `Недостаточно средств`;
             }
@@ -87,6 +101,7 @@ export default (state = initialState, action) => {
                 ...state,
                 success,
                 error,
+                enoughMoney: enough_money,
                 isCalcBulk: false
             }
         }
@@ -96,16 +111,36 @@ export default (state = initialState, action) => {
                 isCalcBulk: false
             }
         }
-        case DELIVERY_BULK_SUCCESS: {
+        case DELIVERY_BULK_FETCH: {
             return {
                 ...state,
-                success: 'Доставлено.'
+                isMessageSend: true
+            }
+        }
+        case DELIVERY_BULK_SUCCESS: {
+
+            let success = null;
+            let error = null;
+            const enoughMoney = state.enoughMoney;
+
+            if (enoughMoney) {
+                success = 'Доставлено';
+            } else {
+                error = 'Недостаточно средств';
+            }
+
+            return {
+                ...state,
+                success,
+                error,
+                isMessageSend: false
             }
         }
         case DELIVERY_BULK_FAILURE: {
             return {
                 ...state,
-                error: 'Произошла ошибка.'
+                error: 'Произошла ошибка',
+                isMessageSend: false
             }
         }
         default: return state;

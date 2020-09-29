@@ -1,7 +1,7 @@
 import React, { memo, useState, useRef, useEffect } from 'react';
 import styles from './PhoneGroup.module.scss';
 import { Input, Tag, Form, Button } from 'antd';
-import { PlusOutlined, EnterOutlined } from '@ant-design/icons';
+import { PlusOutlined, EnterOutlined, SlackCircleFilled } from '@ant-design/icons';
 import getRandomKey from '../../../helpers/getRandomKey';
 import validatePhone from '../../../helpers/validatePhone';
 import { connect } from 'react-redux';
@@ -16,7 +16,7 @@ const PhoneGroup = memo(({ phones, formWidget, addPhone, removePhone }) => {
     const inputElement = useRef();
     const [formPhone] = Form.useForm();
 
-    const changeInput = e => formPhone.setFieldsValue({ phone: validatePhone(e.target.value) });
+    const changeInput = e => formPhone.setFieldsValue({ phone: e.target.value.replace(/[^\d | +]/g, '') });
 
     const showInput = () => {
         setIsShowInput(true);

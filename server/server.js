@@ -13,12 +13,12 @@ app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
 
 
-// app.all('/', (req, res) => {
-//     console.log(req.body.payment.products);
+app.all('/', (req, res) => {
+    console.log(req.body);
 
-
-//     res.sendFile(path.join(__dirname, '../widget/build/card', 'index.html'));
-// });
+    res.send('ok');
+    // res.sendFile(path.join(__dirname, '../widget/build/card', 'index.html'));
+});
 
 // app.get('/oauth2/auth_code', (req, res) => {
 //     res.status(200).json(authData);

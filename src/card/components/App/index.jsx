@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { memo } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
@@ -9,7 +9,7 @@ import { getAccount, deliveryMessage, getStatusMessage, deliveryBulk, calcBulkDe
 import './App.scss';
 import styles from './App.module.scss';
 import { Input, Select, Tag, Checkbox, DatePicker, Button, Form, message } from 'antd';
-import getLeftSymbols from '../../../helpers/getLeftSymbols'
+import SMSInfo from '../../../helpers/SMSInfo'
 import getRandomKey from '../../../helpers/getRandomKey'
 import PhoneGroup from '../PhoneGroup'
 import { getInfo } from '../../../store/reducers'
@@ -29,6 +29,7 @@ const App = ({
     messageId,
     info,
     sum,
+    enoughMoney,
     getAccesToken,
     refreshAccessToken,
     getAccount,
@@ -42,6 +43,8 @@ const App = ({
 
     const [text, setText] = useState('');
     const [formWidget] = Form.useForm();
+    const smsInfo = new SMSInfo();
+    const wrapperElement = useRef()
 
     window.initialPhones = initialPhones;
 
@@ -78,6 +81,14 @@ const App = ({
         }
     }, [messageId]);
 
+    useEffect(() => {
+        formWidget.validateFields().then(values => {
+            if (enoughMoney) {
+                calcBulkDelivery({ ...values, numbers: phones });
+            }
+        });
+    }, [enoughMoney])
+
     const handleText = () => e => setText(e.target.value);
 
     const validatorPhones = () => {
@@ -111,13 +122,14 @@ const App = ({
     }
 
     return (
-        <div className={ styles.wrapper }>
+        <div ref={ wrapperElement } className={ styles.wrapper }>
             <div className={ styles.row }>
                 Баланс: { totalAmount }
             </div>
             <Form
                 form={ formWidget }
                 onFinish={ sendMessage }
+                layout='vertical'
             >
                 <div className={ styles.row }>
                     <Form.Item
@@ -127,7 +139,7 @@ const App = ({
                         <Input.TextArea value={ text } placeholder='Сообщение' rows={ 6 } onChange={ handleText() } />
                     </Form.Item>
                     <span className={ styles.info_text }>
-                        длина: { text.length } / ост. { getLeftSymbols(text.length) } символов • { Math.trunc(text.length / 70) } смс
+                        длина: { text.length } / ост. { smsInfo.getLeftSymbols(text) } символов • { smsInfo.getCountSMS(text) } смс
                     </span>
                 </div>
                 <div className={ styles.row }>
@@ -137,13 +149,13 @@ const App = ({
                         initialValue='PUSHSMS.RU'
                     >
                         <Select
-                            className={ styles.select }
+                            getPopupContainer={ () => wrapperElement.current }
                             placeholder='Выберите отправителя'
                             defaultActiveFirstOption
                             dropdownMatchSelectWidth
                         >
-                            { senderNames.map(name => {
-                                return <Select.Option key={ getRandomKey() } value={ name }>{ name }</Select.Option>
+                            { senderNames.map((name, index) => {
+                                return <Select.Option key={ index } value={ name }>{ name }</Select.Option>
                             }) }
                         </Select>
                     </Form.Item>
@@ -198,7 +210,7 @@ const App = ({
                 { info &&
                     <div className={ styles.row }>
                         <span className={ `${styles.status_text} ${styles[info.status]}` }>
-                            { info.desc }. { sum && `Стоимость: ${sum} руб.` }
+                            { info.desc }.
                         </span>
                     </div>
                 }

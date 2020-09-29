@@ -1,3 +1,3 @@
 export const PORTAL_URL = 'https://serveevsergeev.amocrm.ru';
 // export const PORTAL_URL = location.origin;
-export const REDIRECT_URI = 'https://4b39b1524ee9.ngrok.io';
+export const REDIRECT_URI = 'https://1edae819703a.ngrok.io';
