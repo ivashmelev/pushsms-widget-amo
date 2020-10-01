@@ -1,26 +1,18 @@
 import React, { useState, useRef } from 'react'
-import { memo } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { getAccesToken, refreshAccessToken } from '../../../store/auth/actions'
 import { useEffect } from 'react'
-import Cookie from '../../../helpers/Cookie';
 import { getAccount, deliveryMessage, getStatusMessage, deliveryBulk, calcBulkDelivery } from '../../../store/pushsms/actions'
 import './App.scss';
 import styles from './App.module.scss';
-import { Input, Select, Tag, Checkbox, DatePicker, Button, Form, message } from 'antd';
-import SMSInfo from '../../../helpers/SMSInfo'
-import getRandomKey from '../../../helpers/getRandomKey'
+import { Input, Select, Button, Form } from 'antd';
 import PhoneGroup from '../PhoneGroup'
 import { getInfo } from '../../../store/reducers'
-import { getLead, initialPhones } from '../../../store/amo/actions'
-import { getEntity, getIdEntity } from '../../../helpers/entity'
-import { useDispatch } from 'react-redux'
-import getCodeWidget from '../../../helpers/getCodeWidget'
+import { initialPhones } from '../../../store/amo/actions'
+import { sms_count } from '../../../helpers/SMSInfo'
 
 
 const App = ({
-    isAuth,
     isCalcBulk,
     isMessageSend,
     totalAmount,
@@ -28,14 +20,10 @@ const App = ({
     phones,
     messageId,
     info,
-    sum,
     enoughMoney,
-    getAccesToken,
-    refreshAccessToken,
     getAccount,
     deliveryMessage,
     getStatusMessage,
-    getLead,
     initialPhones,
     deliveryBulk,
     calcBulkDelivery
@@ -43,33 +31,10 @@ const App = ({
 
     const [text, setText] = useState('');
     const [formWidget] = Form.useForm();
-    const smsInfo = new SMSInfo();
+    // const smsInfo = new SMSInfo();
     const wrapperElement = useRef()
 
     window.initialPhones = initialPhones;
-
-    useEffect(() => {
-        if (!isAuth) {
-            const cookie = new Cookie();
-            const refreshToken = cookie.get('refresh-token');
-
-            if (refreshToken) {
-                refreshAccessToken(refreshToken);
-            } else {
-                getAccesToken();
-            }
-        }
-
-        if (isAuth) {
-
-            const entity = getEntity();
-            const id = getIdEntity();
-
-            if (entity === 'leads' && id) {
-                getLead(id)
-            }
-        }
-    }, [isAuth]);
 
     useEffect(() => {
         getAccount();
@@ -82,11 +47,11 @@ const App = ({
     }, [messageId]);
 
     useEffect(() => {
-        formWidget.validateFields().then(values => {
-            if (enoughMoney) {
+        if (enoughMoney) {
+            formWidget.validateFields().then(values => {
                 calcBulkDelivery({ ...values, numbers: phones });
-            }
-        });
+            });
+        }
     }, [enoughMoney])
 
     const handleText = () => e => setText(e.target.value);
@@ -139,7 +104,7 @@ const App = ({
                         <Input.TextArea value={ text } placeholder='Сообщение' rows={ 6 } onChange={ handleText() } />
                     </Form.Item>
                     <span className={ styles.info_text }>
-                        длина: { text.length } / ост. { smsInfo.getLeftSymbols(text) } символов • { smsInfo.getCountSMS(text) } смс
+                        длина: { text.length } / ост. { sms_count(text).length } символов • { sms_count(text).total } смс
                     </span>
                 </div>
                 <div className={ styles.row }>
@@ -220,10 +185,9 @@ const App = ({
 }
 
 const mapState = (state) => {
-    const { auth, pushsms, amo } = state;
+    const { pushsms, amo } = state;
 
     return {
-        ...auth,
         ...pushsms,
         ...amo,
         info: getInfo(state)
@@ -233,12 +197,9 @@ const mapState = (state) => {
 const mapDispatch = (dispatch) => {
     return bindActionCreators(
         {
-            getAccesToken,
-            refreshAccessToken,
             getAccount,
             deliveryMessage,
             getStatusMessage,
-            getLead,
             initialPhones,
             calcBulkDelivery,
             deliveryBulk
