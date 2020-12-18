@@ -20,7 +20,9 @@ const store = createStore(
 
 
 export const withAuthPUSHSMS = (headers) => ({
-    ...headers, authorization: `Bearer ${window.AMOWIDGET.params.pushsmsKey}`
+    // ...headers, authorization: `Bearer ${window.AMOWIDGET.params.pushsmsKey}`
+    ...headers, authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJjdXN0b21lcl9pZCI6NTkwLCJkYXRldGltZSI6MTU5NTQyMjM1Nn0.j2w0F8wTEmDVf7X8KSVDeQ4R34Hzbeie0yaQ36nHhwo`
+
 });
 
 export const getInfo = state => {

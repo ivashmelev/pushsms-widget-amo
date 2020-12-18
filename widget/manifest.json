@@ -5,7 +5,7 @@
     "short_description": "widget.short_description",
     "version": "0.0.1",
     "interface_version": 2,
-    "init_once": true,
+    "init_once": false,
     "locale": [
       "ru"
     ],
@@ -17,12 +17,14 @@
   },
   "locations": [
     "catalogs",
+    "card_sdk",
+    "settings",
     "llist-1",
     "clist-1",
     "lcard-1",
+    "cucard-1",
     "ccard-1",
-    "settings",
-    "card_sdk"
+    "comcard-1"
   ],
   "tour": {
     "is_tour": true,

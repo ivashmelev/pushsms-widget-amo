@@ -1,13 +1,15 @@
-//@import "antd/dist/antd.css";
-
 .wrapper {
     padding: 15px;
 
     background-color: white;
+
+    font-family: Roboto;
 }
 
 .row {
     margin-bottom: 15px;
+
+    font-size: 14px;
 }
 
 .info_text {
@@ -17,11 +19,6 @@
 
     color: #bfbfbf;
 }
-
-// .select {
-//     width: 100%;
-// }
-
 .status_text {
     font-size: 14px;
     white-space: pre-line;
@@ -32,5 +29,24 @@
 
     &.success {
         color: #52c41a;
+    }
+}
+
+.link_wrapper {
+    display: flex;
+    justify-content: center;
+}
+
+.link {
+    width: 100%;
+
+    padding: 10px 0;
+
+    text-align: center;
+
+    color: #1890ff;
+
+    &:hover {
+        cursor: pointer;
     }
 }

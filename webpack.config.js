@@ -1,6 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin');
+const webpack = require('webpack');
 
 module.exports = {
     entry: {
@@ -11,6 +12,9 @@ module.exports = {
         path: path.join(__dirname, '/widget/build'),
         filename: '[name]/bundle.js',
         publicPath: '/'
+    },
+    optimization: {
+        minimize: false
     },
     module: {
         rules: [
@@ -55,7 +59,20 @@ module.exports = {
             {
                 test: /\.scss$/,
                 exclude: /\.module\.s(a|c)ss$/,
-                use: ['style-loader', 'css-loader', 'sass-loader',],
+                use: [
+                    'style-loader',
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            modules: {
+                                mode: 'local',
+                                localIdentName: '[local]',
+                                context: path.resolve(__dirname, 'src'),
+                            },
+                        },
+                    },
+                    'sass-loader'
+                ],
             },
             {
                 test: /\.module\.s(a|c)ss$/,
@@ -94,11 +111,17 @@ module.exports = {
             chunks: ['settings'],
             inlineSource: '.(js|css)$' // embed all javascript and css inline
         }),
+        // new webpack.NormalModuleReplacementPlugin(
+        //     /node_modules\/antd\/lib\/style\/index\.less/,
+        //     path.join(__dirname, 'src/card/components/App/App.less')
+        // ),
         new HtmlWebpackInlineSourcePlugin()
     ],
     devServer: {
         contentBase: path.join(__dirname, '/widget/build'),
-        compress: true,
+        // compress: {
+        //     drop_console: true
+        // },
         port: 5000,
         hot: true,
         https: true,

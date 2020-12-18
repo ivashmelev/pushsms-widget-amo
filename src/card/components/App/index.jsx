@@ -1,16 +1,18 @@
-import React, { useState, useRef } from 'react'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import { useEffect } from 'react'
-import { getAccount, deliveryMessage, getStatusMessage, deliveryBulk, calcBulkDelivery } from '../../../store/pushsms/actions'
-import './App.scss';
+import React, { useState, useRef, useEffect } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import {
+    getAccount, deliveryMessage, getStatusMessage, deliveryBulk, calcBulkDelivery, getTemplates, createTemplate, updateTemplate, deleteTemplate,
+} from '../../../store/pushsms/actions';
 import styles from './App.module.scss';
-import { Input, Select, Button, Form } from 'antd';
-import PhoneGroup from '../PhoneGroup'
-import { getInfo } from '../../../store/reducers'
-import { initialPhones } from '../../../store/amo/actions'
-import { sms_count } from '../../../helpers/SMSInfo'
-
+import {
+    Input, Select, Button, Form,
+} from 'antd';
+import PhoneGroup from '../PhoneGroup';
+import { getInfo } from '../../../store/reducers';
+import { initialPhones } from '../../../store/amo/actions';
+import { sms_count } from '../../../helpers/SMSInfo';
+import Template from '../Template';
 
 const App = ({
     isCalcBulk,
@@ -21,23 +23,28 @@ const App = ({
     messageId,
     info,
     enoughMoney,
+    templates,
     getAccount,
     deliveryMessage,
     getStatusMessage,
     initialPhones,
     deliveryBulk,
-    calcBulkDelivery
+    calcBulkDelivery,
+    getTemplates,
+    createTemplate,
+    updateTemplate,
+    deleteTemplate
 }) => {
-
     const [text, setText] = useState('');
+    const [showTemplates, setShowTemplates] = useState(false)
     const [formWidget] = Form.useForm();
-    // const smsInfo = new SMSInfo();
-    const wrapperElement = useRef()
+    const wrapperElement = useRef();
 
     window.initialPhones = initialPhones;
 
     useEffect(() => {
         getAccount();
+        getTemplates();
     }, []);
 
     useEffect(() => {
@@ -48,13 +55,13 @@ const App = ({
 
     useEffect(() => {
         if (enoughMoney) {
-            formWidget.validateFields().then(values => {
+            formWidget.validateFields().then((values) => {
                 calcBulkDelivery({ ...values, numbers: phones });
             });
         }
-    }, [enoughMoney])
+    }, [enoughMoney]);
 
-    const handleText = () => e => setText(e.target.value);
+    const handleText = () => (e) => setText(e.target.value);
 
     const validatorPhones = () => {
         if (phones.length > 0) {
@@ -62,7 +69,7 @@ const App = ({
         }
 
         return Promise.reject('phones is required');
-    }
+    };
 
     const sendMessage = () => {
         if (phones.length > 1) {
@@ -71,19 +78,29 @@ const App = ({
             formWidget.setFieldsValue({ phone: phones[0] });
         }
 
-        formWidget.validateFields().then(values => {
+        formWidget.validateFields().then((values) => {
             if (phones.length > 1) {
                 deliveryBulk({ ...values, numbers: values.phones });
             } else {
                 deliveryMessage(values);
             }
         });
-    }
+    };
 
     const handleCalc = () => {
-        formWidget.validateFields().then(values => {
+        formWidget.validateFields().then((values) => {
             calcBulkDelivery({ ...values, numbers: phones });
         });
+    };
+
+    const openTemplates = () => {
+        setShowTemplates(true)
+    }
+
+    const choiceTemplate = (id) => {
+        const index = templates.findIndex(el => el.id === id)
+
+        formWidget.setFieldsValue({ text: templates[index].text })
     }
 
     return (
@@ -96,6 +113,36 @@ const App = ({
                 onFinish={ sendMessage }
                 layout='vertical'
             >
+                <div className={ styles.row }>
+                    <Form.Item
+                        name='templates'
+                        label='Шаблоны'
+                        initialValue=''
+                    >
+                        <Select
+                            getPopupContainer={ () => wrapperElement.current }
+                            placeholder='Выберите шаблон'
+                            defaultActiveFirstOption
+                            dropdownMatchSelectWidth
+                            allowClear
+                            onChange={ choiceTemplate }
+                            dropdownRender={ (originNode) =>
+                                <div>
+                                    { originNode }
+                                    <div className={ styles.link_wrapper }>
+                                        { formWidget.getFieldValue('templates') ?
+                                            <a onClick={ openTemplates } className={ styles.link }>Редактировать шаблон</a>
+                                            :
+                                            <a onClick={ openTemplates } className={ styles.link }>Создать шаблон</a>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        >
+                            { templates.map(({ id, name }, index) => <Select.Option key={ index } value={ id }>{ name }</Select.Option>) }
+                        </Select>
+                    </Form.Item>
+                </div>
                 <div className={ styles.row }>
                     <Form.Item
                         name='text'
@@ -119,9 +166,7 @@ const App = ({
                             defaultActiveFirstOption
                             dropdownMatchSelectWidth
                         >
-                            { senderNames.map((name, index) => {
-                                return <Select.Option key={ index } value={ name }>{ name }</Select.Option>
-                            }) }
+                            { senderNames.map((name, index) => <Select.Option key={ index } value={ name }>{ name }</Select.Option>) }
                         </Select>
                     </Form.Item>
                 </div>
@@ -133,36 +178,23 @@ const App = ({
                         rules={ [{
                             required: true,
                             message: 'Введите номер',
-                            validator: validatorPhones
+                            validator: validatorPhones,
                         }] }
                     >
                         <PhoneGroup formWidget={ formWidget } />
                     </Form.Item>
                 </div>
-                {/* <div className={ styles.row }>
-                    <Checkbox>
-                        Отложенная отправка
-                    </Checkbox>
-                </div>
                 <div className={ styles.row }>
-                    <Checkbox>
-                        Отправка в дневное время
-                    </Checkbox>
-                </div>
-                <div className={ styles.row }>
-                    <DatePicker placeholder="Дата и время" showTime={ { format: 'HH:mm' } } format='DD.MM.YYYY HH:mm' />
-                </div> */}
-                <div className={ styles.row }>
-                    { phones.length > 1 && text.length !== 0 &&
-                        <Button style={ { margin: '0 0 10px 0' } } loading={ isCalcBulk }
+                    { phones.length > 1 && text.length !== 0
+                        && <Button style={ { margin: '0 0 10px 0' } } loading={ isCalcBulk }
                             type='dashed'
                             onClick={ handleCalc }
                             size='small'
                         >
                             Рассчитать стоимость
-                            </Button>
+                        </Button>
                     }
-                    <Form.Item>
+                    <Form.Item style={ { marginBottom: '0px' } }>
                         <Button loading={ isMessageSend }
                             htmlType='submit'
                             type='primary'
@@ -172,17 +204,25 @@ const App = ({
                         </Button>
                     </Form.Item>
                 </div>
-                { info &&
-                    <div className={ styles.row }>
+                { info
+                    && <div className={ styles.row }>
                         <span className={ `${styles.status_text} ${styles[info.status]}` }>
                             { info.desc }.
                         </span>
                     </div>
                 }
             </Form>
+            <Template
+                isVisible={ showTemplates }
+                templates={ templates }
+                create={ createTemplate }
+                update={ updateTemplate }
+                remove={ deleteTemplate }
+                close={ () => setShowTemplates(false) }
+            />
         </div>
-    )
-}
+    );
+};
 
 const mapState = (state) => {
     const { pushsms, amo } = state;
@@ -190,22 +230,24 @@ const mapState = (state) => {
     return {
         ...pushsms,
         ...amo,
-        info: getInfo(state)
+        info: getInfo(state),
     };
-}
+};
 
-const mapDispatch = (dispatch) => {
-    return bindActionCreators(
-        {
-            getAccount,
-            deliveryMessage,
-            getStatusMessage,
-            initialPhones,
-            calcBulkDelivery,
-            deliveryBulk
-        },
-        dispatch
-    )
-}
+const mapDispatch = (dispatch) => bindActionCreators(
+    {
+        getAccount,
+        deliveryMessage,
+        getStatusMessage,
+        initialPhones,
+        calcBulkDelivery,
+        deliveryBulk,
+        getTemplates,
+        createTemplate,
+        updateTemplate,
+        deleteTemplate
+    },
+    dispatch,
+);
 
 export default connect(mapState, mapDispatch)(App);
