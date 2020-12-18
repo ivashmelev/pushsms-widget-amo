@@ -5,9 +5,7 @@
     },
     "extends": [
         "plugin:react/recommended",
-        "airbnb",
-        "plugin:@typescript-eslint/eslint-recommended",
-        "plugin:@typescript-eslint/recommended"
+        "airbnb"
     ],
     "parser": "babel-eslint",
     "parserOptions": {
@@ -22,8 +20,7 @@
         "server.js"
     ],
     "plugins": [
-        "react",
-        "@typescript-eslint"
+        "react"
     ],
     "rules": {
         "react/jsx-filename-extension": [
@@ -73,6 +70,9 @@
         "jsx-a11y/click-events-have-key-events": "off",
         "jsx-a11y/no-static-element-interactions": "off",
         "camelcase": "off",
-        "no-prototype-builtins": "off"
+        "no-prototype-builtins": "off",
+        "prefer-promise-reject-errors": "off",
+        "jsx-a11y/anchor-is-valid": "off",
+        "react/no-array-index-key": "off"
     }
 }
