@@ -1,0 +1,78 @@
+{
+    "env": {
+        "browser": true,
+        "es2020": true
+    },
+    "extends": [
+        "plugin:react/recommended",
+        "airbnb",
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:@typescript-eslint/recommended"
+    ],
+    "parser": "babel-eslint",
+    "parserOptions": {
+        "ecmaFeatures": {
+            "jsx": true
+        },
+        "ecmaVersion": 11,
+        "sourceType": "module"
+    },
+    "ignorePatterns": [
+        "webpack.config.js",
+        "server.js"
+    ],
+    "plugins": [
+        "react",
+        "@typescript-eslint"
+    ],
+    "rules": {
+        "react/jsx-filename-extension": [
+            1,
+            {
+                "extensions": [
+                    ".js",
+                    ".jsx",
+                    ".ts",
+                    ".tsx"
+                ]
+            }
+        ],
+        "react/jsx-indent": [
+            "error",
+            4
+        ],
+        "react/jsx-indent-props": [
+            "error",
+            4
+        ],
+        "indent": [
+            "error",
+            4
+        ],
+        "import/no-unresolved": "off",
+        "linebreak-style": "off",
+        "import/extensions": "off",
+        "import/prefer-default-export": "off",
+        "react/prop-types": "off",
+        "no-shadow": "off",
+        "semi": [
+            "error",
+            "always"
+        ],
+        "no-underscore-dangle": "off",
+        "max-len": "off",
+        "@typescript-eslint/explicit-module-boundary-types": "off",
+        "@typescript-eslint/no-explicit-any": "off",
+        "no-param-reassign": "off",
+        "no-plusplus": "off",
+        "consistent-return": "off",
+        "no-return-assign": "off",
+        "class-methods-use-this": "off",
+        "no-restricted-syntax": "off",
+        "guard-for-in": "off",
+        "jsx-a11y/click-events-have-key-events": "off",
+        "jsx-a11y/no-static-element-interactions": "off",
+        "camelcase": "off",
+        "no-prototype-builtins": "off"
+    }
+}

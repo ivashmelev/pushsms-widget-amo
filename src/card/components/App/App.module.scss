@@ -1,0 +1,52 @@
+.wrapper {
+    padding: 15px;
+
+    background-color: white;
+
+    font-family: Roboto;
+}
+
+.row {
+    margin-bottom: 15px;
+
+    font-size: 14px;
+}
+
+.info_text {
+    display: flex;
+
+    margin-top: -20px;
+
+    color: #bfbfbf;
+}
+.status_text {
+    font-size: 14px;
+    white-space: pre-line;
+
+    &.error {
+        color: #ff4d4f;
+    }
+
+    &.success {
+        color: #52c41a;
+    }
+}
+
+.link_wrapper {
+    display: flex;
+    justify-content: center;
+}
+
+.link {
+    width: 100%;
+
+    padding: 10px 0;
+
+    text-align: center;
+
+    color: #1890ff;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
