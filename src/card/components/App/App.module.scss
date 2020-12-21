@@ -44,9 +44,26 @@
 
     text-align: center;
 
-    color: #1890ff;
+    color: #4ad3d1;
 
     &:hover {
         cursor: pointer;
     }
+}
+
+.center {
+    display: flex;
+    justify-content: center;
+}
+
+.datepicker {
+    left: -175px !important;
+}
+
+:global(.card-widgets._with-scroll .in_list .card-widgets__elements) {
+    overflow-y: unset !important;
+}
+
+:global(.card-widgets) {
+    overflow: unset !important;
 }

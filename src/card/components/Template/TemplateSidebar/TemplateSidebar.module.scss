@@ -26,12 +26,12 @@
     transition: 0.3s all cubic-bezier(0.77, 0, 0.175, 1);
 
     &.active {
-        background-color: #1890ff;
+        background-color: #4ad3d1;
         color: white;
     }
 
     &:hover {
-        background-color: #1890ff;
+        background-color: #4ad3d1;
         color: white;
         cursor: pointer;
     }

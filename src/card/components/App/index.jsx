@@ -2,8 +2,10 @@ import React, { useState, useRef, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {
-    Input, Select, Button, Form,
+    Input, Select, Button, Form, Checkbox, DatePicker, Calendar,
 } from 'antd';
+import moment from 'moment';
+import Modal from 'antd/lib/modal/Modal';
 import {
     getAccount, deliveryMessage, getStatusMessage, deliveryBulk, calcBulkDelivery, getTemplates, createTemplate, updateTemplate, deleteTemplate,
 } from '../../../store/pushsms/actions';
@@ -37,6 +39,10 @@ const App = ({
     addPhone,
 }) => {
     const [text, setText] = useState('');
+    const [sheduledState, setSheduledState] = useState({
+        isShow: false,
+        isChecked: false,
+    });
     const [showTemplates, setShowTemplates] = useState(false);
     const [formWidget] = Form.useForm();
     const wrapperElement = useRef();
@@ -112,6 +118,22 @@ const App = ({
         const index = templates.findIndex((el) => el.id === id);
 
         formWidget.setFieldsValue({ text: templates[index].text });
+    };
+
+    const onCheckSheduled = (e) => {
+        setSheduledState({
+            ...sheduledState,
+            isChecked: e.target.checked,
+            isShow: !sheduledState.isChecked,
+        });
+    };
+
+    const onCloseSheduled = () => {
+        setSheduledState({
+            ...sheduledState,
+            isShow: true,
+            isChecked: formWidget.getFieldValue('sheduled'),
+        });
     };
 
     return (
@@ -193,6 +215,44 @@ const App = ({
                         </Select>
                     </Form.Item>
                 </div>
+                <div className={styles.row}>
+                    <Checkbox
+                        checked={sheduledState.isChecked}
+                        onChange={onCheckSheduled}
+                    >
+                        Отложенная отправка
+                    </Checkbox>
+                </div>
+                {sheduledState.isShow && (
+                /* <Modal
+                    visible={sheduledState.isShow}
+                    footer={false}
+                    centered
+                    onCancel={onCloseSheduled}
+                    getContainer={() => wrapperElement.current}
+                > */
+                    // <div className={styles.center}>
+                    <Form.Item
+                        name="sheduled"
+                    >
+                        <DatePicker
+                            getPopupContainer={() => wrapperElement.current}
+                            dropdownClassName={styles.datepicker}
+                            popupStyle={{ left: '-175px' }}
+                            showTime
+                            showNow={false}
+                            format="DD.MM.YYYY HH:mm"
+                            disabledDate={(currentDate) => currentDate && currentDate < moment().endOf('second')}
+                            disabledHours={() => Array.from(Array(moment().hours()).keys())}
+                            disabledMinutes={() => Array.from(Array(moment().minutes() + 5).keys())}
+                            onOk={onCloseSheduled}
+                        />
+                    </Form.Item>
+                    // </div>
+                // </Modal>
+                // {/* // <div className={styles.row}> */}
+                // {/* // </div> */}
+                )}
                 <div className={styles.row}>
                     <Form.Item
                         label={phones.length > 1 ? 'Доп. телефоны' : 'Номер'}

@@ -1,7 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin');
-const webpack = require('webpack');
 
 module.exports = {
     entry: {
@@ -50,6 +49,9 @@ module.exports = {
                         loader: "less-loader",
                         options: {
                             lessOptions: {
+                                modifyVars: {
+                                    'primary-color': '#4ad3d1'
+                                },
                                 javascriptEnabled: true
                             }
                         }
