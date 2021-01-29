@@ -2,10 +2,9 @@ import React, { useState, useRef, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {
-    Input, Select, Button, Form, Checkbox, DatePicker, Calendar,
+    Input, Select, Button, Form, Checkbox, DatePicker,
 } from 'antd';
 import moment from 'moment';
-import Modal from 'antd/lib/modal/Modal';
 import {
     getAccount, deliveryMessage, getStatusMessage, deliveryBulk, calcBulkDelivery, getTemplates, createTemplate, updateTemplate, deleteTemplate,
 } from '../../../store/pushsms/actions';
@@ -15,6 +14,7 @@ import { getInfo } from '../../../store/reducers';
 import { addPhone, initialPhones } from '../../../store/amo/actions';
 import { sms_count } from '../../../helpers/SMSInfo';
 import Template from '../Template';
+import { isDev } from '../../../store';
 
 const App = ({
     isCalcBulk,
@@ -39,9 +39,13 @@ const App = ({
     addPhone,
 }) => {
     const [text, setText] = useState('');
-    const [sheduledState, setSheduledState] = useState({
+    const [scheduledState, setScheduledState] = useState({
         isShow: false,
         isChecked: false,
+        isVisibleScheduled: true,
+        selectedDate: moment(),
+        startDate: moment().set({ hour: 0, minute: 0 }),
+        endDate: moment().set({ month: 1, minute: 0 }),
     });
     const [showTemplates, setShowTemplates] = useState(false);
     const [formWidget] = Form.useForm();
@@ -78,6 +82,19 @@ const App = ({
         }
     }, [enoughMoney]);
 
+    useEffect(() => {
+        try {
+            const widgetCode = window.AMOWIDGET.get_settings().widget_code;
+
+            const caption = document
+                .querySelector(`.card-widgets__widget[data-code="${widgetCode}"] .js-widget-caption-block`);
+
+            caption.style.backgroundColor = '#4ad3d1';
+        } catch (e) {
+
+        }
+    });
+
     const handleText = () => (e) => setText(e.target.value);
 
     const validatorPhones = () => {
@@ -96,6 +113,10 @@ const App = ({
         }
 
         formWidget.validateFields().then((values) => {
+            if (values.scheduled_at) {
+                values.scheduled_at = values.scheduled_at.format('YYYY-MM-DDTHH:mm:ssZ');
+            }
+
             if (phones.length > 1) {
                 deliveryBulk({ ...values, numbers: values.phones });
             } else {
@@ -121,19 +142,44 @@ const App = ({
     };
 
     const onCheckSheduled = (e) => {
-        setSheduledState({
-            ...sheduledState,
+        if (!e.target.checked) {
+            formWidget.resetFields(['scheduled_at']);
+        }
+
+        setScheduledState({
+            ...scheduledState,
             isChecked: e.target.checked,
-            isShow: !sheduledState.isChecked,
+            isShow: !scheduledState.isChecked,
         });
     };
 
     const onCloseSheduled = () => {
-        setSheduledState({
-            ...sheduledState,
+        setScheduledState({
+            ...scheduledState,
             isShow: true,
-            isChecked: formWidget.getFieldValue('sheduled'),
+            isChecked: formWidget.getFieldValue('scheduled_at'),
         });
+    };
+
+    const onOpenScheduled = (open) => {
+        const elements = [
+            document.getElementById('nano-card-widgets'),
+            document.getElementById('widgets_block'),
+        ];
+
+        elements.forEach((element) => {
+            if (element) {
+                if (open) {
+                    element.classList.add('open');
+                } else {
+                    element.classList.remove('open');
+                }
+            }
+        });
+    };
+
+    const onSelectDate = (date) => {
+        setScheduledState({ ...scheduledState, selectedDate: date });
     };
 
     return (
@@ -215,44 +261,68 @@ const App = ({
                         </Select>
                     </Form.Item>
                 </div>
-                <div className={styles.row}>
-                    <Checkbox
-                        checked={sheduledState.isChecked}
-                        onChange={onCheckSheduled}
-                    >
-                        Отложенная отправка
-                    </Checkbox>
-                </div>
-                {sheduledState.isShow && (
-                /* <Modal
-                    visible={sheduledState.isShow}
-                    footer={false}
-                    centered
-                    onCancel={onCloseSheduled}
-                    getContainer={() => wrapperElement.current}
-                > */
-                    // <div className={styles.center}>
-                    <Form.Item
-                        name="sheduled"
-                    >
-                        <DatePicker
-                            getPopupContainer={() => wrapperElement.current}
-                            dropdownClassName={styles.datepicker}
-                            popupStyle={{ left: '-175px' }}
-                            showTime
-                            showNow={false}
-                            format="DD.MM.YYYY HH:mm"
-                            disabledDate={(currentDate) => currentDate && currentDate < moment().endOf('second')}
-                            disabledHours={() => Array.from(Array(moment().hours()).keys())}
-                            disabledMinutes={() => Array.from(Array(moment().minutes() + 5).keys())}
-                            onOk={onCloseSheduled}
-                        />
-                    </Form.Item>
-                    // </div>
-                // </Modal>
-                // {/* // <div className={styles.row}> */}
-                // {/* // </div> */}
+                {scheduledState.isVisibleScheduled && (
+                    <>
+                        <div className={styles.row}>
+                            <Checkbox
+                                checked={scheduledState.isChecked}
+                                onChange={onCheckSheduled}
+                            >
+                                Отложенная отправка
+                            </Checkbox>
+                        </div>
+                        {scheduledState.isShow && (
+                            <Form.Item
+                                name="scheduled_at"
+                            >
+                                <DatePicker
+                                    getPopupContainer={() => wrapperElement.current}
+                                    dropdownClassName={styles.datepicker}
+                                    showTime
+                                    showNow={false}
+                                    format="DD.MM.YYYY HH:mm"
+                                    disabledDate={(date) => {
+                                        if (date) {
+                                            return (
+                                                !date.isBetween(
+                                                    scheduledState.startDate,
+                                                    scheduledState.endDate,
+                                                )
+                                            );
+                                        }
+                                    }}
+                                    disabledHours={
+                                        () => {
+                                            const hours = [];
+
+                                            if (scheduledState.selectedDate.date() === moment().date()) {
+                                                return Array.from(Array(moment().hours()).keys());
+                                            }
+
+                                            if (scheduledState.endDate.date() - 1 === scheduledState.selectedDate.date()) {
+                                                for (let i = 0; i < 24; i++) {
+                                                    if (moment().hours() - 1 < i) {
+                                                        hours.push(i);
+                                                    }
+                                                }
+                                            }
+                                            return hours;
+                                        }
+                                    }
+                                    disabledMinutes={
+                                        () => scheduledState.selectedDate.date() === moment().date()
+                                    && Array.from(Array(moment().minutes() + 5).keys())
+                                    }
+                                    onSelect={onSelectDate}
+                                    onOk={onCloseSheduled}
+                                    onOpenChange={onOpenScheduled}
+
+                                />
+                            </Form.Item>
+                        )}
+                    </>
                 )}
+
                 <div className={styles.row}>
                     <Form.Item
                         label={phones.length > 1 ? 'Доп. телефоны' : 'Номер'}

@@ -25,15 +25,16 @@ import {
     UPDATE_TEMPLATE_FAILURE,
     DELETE_TEMPLATE_FETCH,
     DELETE_TEMPLATE_SUCCESS,
-    DELETE_TEMPLATE_FAILURE
+    DELETE_TEMPLATE_FAILURE,
 } from './types';
 
 import { withAuthPUSHSMS } from '../reducers';
+import { PUSHSMSURL } from '..';
 
 export const getAccount = () => async (dispatch) => {
     dispatch({ type: GET_ACCOUNT_FETCH });
 
-    const response = await fetch('https://api.pushsms.ru/api/amo/account/', {
+    const response = await fetch(`https://${PUSHSMSURL}/api/amo/account/`, {
         method: 'GET',
         headers: withAuthPUSHSMS(),
     });
@@ -54,7 +55,7 @@ export const getAccount = () => async (dispatch) => {
 export const deliveryMessage = (data) => async (dispatch) => {
     dispatch({ type: DELIVERY_MESSAGE_FETCH });
 
-    const response = await fetch('https://api.pushsms.ru/api/amo/delivery/', {
+    const response = await fetch(`https://${PUSHSMSURL}/api/amo/delivery/`, {
         method: 'POST',
         headers: withAuthPUSHSMS(
             { 'Content-Type': 'application/json' },
@@ -78,7 +79,7 @@ export const deliveryMessage = (data) => async (dispatch) => {
 export const getStatusMessage = (id) => async (dispatch) => {
     dispatch({ type: GET_STATUS_FETCH });
 
-    const response = await fetch(`https://api.pushsms.ru/api/amo/delivery/${id}`, {
+    const response = await fetch(`https://${PUSHSMSURL}/api/amo/delivery/${id}`, {
         method: 'GET',
         headers: withAuthPUSHSMS(),
     });
@@ -99,7 +100,7 @@ export const getStatusMessage = (id) => async (dispatch) => {
 export const calcBulkDelivery = (data) => async (dispatch) => {
     dispatch({ type: CALCULATE_BULK_DELIVERY_FETCH });
 
-    const response = await fetch('https://api.pushsms.ru/api/amo/bulk_delivery/calculate', {
+    const response = await fetch(`https://${PUSHSMSURL}/api/amo/bulk_delivery/calculate`, {
         method: 'POST',
         headers: withAuthPUSHSMS(
             { 'Content-Type': 'application/json' },
@@ -123,7 +124,7 @@ export const calcBulkDelivery = (data) => async (dispatch) => {
 export const deliveryBulk = (data) => async (dispatch) => {
     dispatch({ type: DELIVERY_BULK_FETCH });
 
-    const response = await fetch('https://api.pushsms.ru/api/amo/bulk_delivery', {
+    const response = await fetch(`https://${PUSHSMSURL}/api/amo/bulk_delivery`, {
         method: 'POST',
         headers: withAuthPUSHSMS(
             { 'Content-Type': 'application/json' },
@@ -147,7 +148,7 @@ export const deliveryBulk = (data) => async (dispatch) => {
 export const getTemplates = (id = '') => async (dispatch) => {
     dispatch({ type: GET_TEMPLATES_FETCH });
 
-    const response = await fetch(`https://api.pushsms.ru/api/amo/template/${id}`, {
+    const response = await fetch(`https://${PUSHSMSURL}/api/amo/template/${id}`, {
         method: 'GET',
         headers: withAuthPUSHSMS(),
     });
@@ -166,15 +167,14 @@ export const getTemplates = (id = '') => async (dispatch) => {
 };
 
 export const createTemplate = (body) => async (dispatch) => {
+    dispatch({ type: CREATE_TEMPLATE_FETCH });
 
-    dispatch({ type: CREATE_TEMPLATE_FETCH })
-
-    const response = await fetch(`https://api.pushsms.ru/api/amo/template/`, {
+    const response = await fetch(`https://${PUSHSMSURL}/api/amo/template/`, {
         method: 'POST',
         headers: withAuthPUSHSMS(
             { 'Content-Type': 'application/json' },
         ),
-        body: JSON.stringify(body)
+        body: JSON.stringify(body),
     });
 
     if (response.ok) {
@@ -188,25 +188,24 @@ export const createTemplate = (body) => async (dispatch) => {
             payload: await response.json(),
         });
     }
-}
+};
 
 export const updateTemplate = (id, body) => async (dispatch) => {
+    dispatch({ type: UPDATE_TEMPLATE_FETCH });
 
-    dispatch({ type: UPDATE_TEMPLATE_FETCH })
-
-    const response = await fetch(`https://api.pushsms.ru/api/amo/template/${id}`, {
+    const response = await fetch(`https://${PUSHSMSURL}/api/amo/template/${id}`, {
         method: 'PATCH',
         headers: withAuthPUSHSMS(
             { 'Content-Type': 'application/json' },
         ),
-        body: JSON.stringify(body)
+        body: JSON.stringify(body),
     });
 
     if (response.ok) {
         dispatch({
             type: UPDATE_TEMPLATE_SUCCESS,
             payload: await response.json(),
-            meta: { id }
+            meta: { id },
         });
     } else {
         dispatch({
@@ -214,13 +213,12 @@ export const updateTemplate = (id, body) => async (dispatch) => {
             payload: await response.json(),
         });
     }
-}
+};
 
 export const deleteTemplate = (id) => async (dispatch) => {
+    dispatch({ type: DELETE_TEMPLATE_FETCH });
 
-    dispatch({ type: DELETE_TEMPLATE_FETCH })
-
-    const response = await fetch(`https://api.pushsms.ru/api/amo/template/${id}`, {
+    const response = await fetch(`https://${PUSHSMSURL}/api/amo/template/${id}`, {
         method: 'DELETE',
         headers: withAuthPUSHSMS(
             { 'Content-Type': 'application/json' },
@@ -231,7 +229,7 @@ export const deleteTemplate = (id) => async (dispatch) => {
         dispatch({
             type: DELETE_TEMPLATE_SUCCESS,
             payload: await response.json(),
-            meta: { id }
+            meta: { id },
         });
     } else {
         dispatch({
@@ -239,4 +237,4 @@ export const deleteTemplate = (id) => async (dispatch) => {
             payload: await response.json(),
         });
     }
-}
+};

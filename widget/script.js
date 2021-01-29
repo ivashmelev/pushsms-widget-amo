@@ -33,6 +33,7 @@ define(['underscore', 'twigjs'], function (_, Twig) {
 				return true;
 			}, this),
 			bind_actions: function () {
+
 				return true;
 			},
 			settings: function () {
@@ -82,18 +83,14 @@ define(['underscore', 'twigjs'], function (_, Twig) {
 			},
 			loadPreloadedData: () => {
 				return new Promise(_.bind(function (resolve, reject) {
-					console.log(this);
 
 				}), this);
 			},
 			loadElements: (type, id) => {
-				console.log(type, id);
 			},
 			linkCard: (links) => {
-				console.log(links);
 			},
 			searchDataInCard: (query, type, id) => {
-				console.log(query, type, id);
 			}
 		};
 		return this;

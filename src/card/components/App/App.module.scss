@@ -60,10 +60,26 @@
     left: -175px !important;
 }
 
+.text_bold {
+    font-weight: bold;
+}
+
 :global(.card-widgets._with-scroll .in_list .card-widgets__elements) {
     overflow-y: unset !important;
 }
 
-:global(.card-widgets) {
-    overflow: unset !important;
+:global(.card-widgets.open) {
+    overflow-y: unset !important;
+}
+
+:global(#nano-card-widgets) {
+    overflow-y: auto;
+}
+
+:global(#widgets_block.open) {
+    overflow: unset;
+}
+
+:global(#nano-card-widgets.open) {
+    overflow-y: unset;
 }
